@@ -10,5 +10,7 @@ java -jar SOM-1.2.jar
 
 Se estiver no windows, pode dar dois cliques no arquivo SOM-1.2.jar
 
+Para mais detalhes visite a página do projeto em: https://www.italoinfo.com.br/projetos/SOM/
+
 
 
