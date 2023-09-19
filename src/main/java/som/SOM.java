@@ -161,39 +161,44 @@ public class SOM {
         
         double[] medias = new double[ amostrasDIM ];
         double[] minDs = new double[ amostrasDIM ];
-        double[] maxDs = new double[ amostrasDIM ];        
-                
-        for( int j = 0; j < amostrasDIM; j++ ) {
-            minDs[ j ] = Double.POSITIVE_INFINITY;
-            maxDs[ j ] = Double.NEGATIVE_INFINITY;
-        }
+        double[] maxDs = new double[ amostrasDIM ];   
         
         for( int j = 0; j < amostrasDIM; j++ ) {                        
             medias[ j ] = 0;
             for( int i = 0; i < amostras.length; i++ )
                 medias[ j ] += amostras[ i ][ j ];                                            
-            medias[ j ] /= amostras.length;                        
-            
+            medias[ j ] /= amostras.length;                                                
+        }         
+        
+        for( int j = 0; j < amostrasDIM; j++ ) {
+            minDs[ j ] = Double.POSITIVE_INFINITY;
+            maxDs[ j ] = Double.NEGATIVE_INFINITY;
+        }
+        
+        for( int j = 0; j < amostrasDIM; j++ ) {
             for( int i = 0; i < amostras.length; i++ ) {
-                double d = Math.abs( medias[ j ] - amostras[ i ][ j ] );
+                double d = Math.abs( amostras[ i ][ j ] - medias[ j ] );
                 if ( d < minDs[ j ] )
                     minDs[ j ] = d;
                 if ( d > maxDs[ j ] )
                     maxDs[ j ] = d;     
             }
-        }        
+        }     
                 
-        int[] indices = new int[ amostras.length ];
-        this.calculaIndicesRandomicos( indices );
-        
         for( int i = 0; i < gradeQNV; i++ ) {
             for( int j = 0; j < gradeQNH; j++ ) {
                 double[] peso = new double[ amostrasDIM ];
                 
                 for( int k = 0; k < amostrasDIM; k++ ) {
-                    int l = ( ( i * gradeQNH ) + j ) % amostras.length;                     
-                    double d = Math.abs( amostras[ indices[ l ] ][ k ] - medias[ k ] );
-                    peso[ k ] = 1.0d - ( ( d - minDs[ k ] ) / ( maxDs[ k ] - minDs[ k ] ) );
+                    int l = ( ( i * gradeQNH ) + j ) % amostras.length;                         
+                    double d = Math.abs( amostras[ l ][ k ] - medias[ k ] );
+                    
+                    double p;
+                    if ( maxDs[ k ] == minDs[ k ] )
+                        p = Math.random();
+                    else p = 1.0d - ( ( d - minDs[ k ] ) / ( maxDs[ k ] - minDs[ k ] ) );
+                    
+                    peso[ k ] = -1.0d + ( p * 2.0d );  
                 }
                 
                 double x = grade[i][j][0];

@@ -1,7 +1,6 @@
 package exemplos;
 
 import javax.swing.JFrame;
-import italo.iplot.gui.DesenhoUI;
 import som.SOMEvent;
 import som.SOMMatrizU;
 import aplic.SOMAplic;

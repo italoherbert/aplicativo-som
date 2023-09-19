@@ -14,6 +14,8 @@ public class OrdenaCoresEX extends SOMAplicContainer implements SOMAplic {
         {255,0,0},{0,128,0},{0,0,255},{0,100,0},{0,0,139},{255,255,0},{255,165,0},{128,0,128}
     };
     
+    private int[][][] cores = null;
+    
     private Grafico grafico = new RetangularMatCoresGrafico();
     
     public OrdenaCoresEX() {
@@ -27,6 +29,7 @@ public class OrdenaCoresEX extends SOMAplicContainer implements SOMAplic {
         for( int i = 0; i < amostras.length; i++ ) 
             for( int j = 0; j < 3; j++ )
                 amostras[i][j] /= 255.0d;                                                               
+        
     }   
 
     @Override
@@ -41,18 +44,21 @@ public class OrdenaCoresEX extends SOMAplicContainer implements SOMAplic {
          
     @Override
     public void repintaGraficoSOM() {
+        if ( cfg.getNeuronios().length == 0 )
+            return;
+        
         int gradeQNH = cfg.getGradeQuantNeuroniosHorizontal();
         int gradeQNV = cfg.getGradeQuantNeuroniosVertical();                
         
-        int[][][] cores = new int[ gradeQNV ][ gradeQNH ][3];
+        if ( cores == null )        
+            cores = new int[ gradeQNV ][ gradeQNH ][3];
+        
         for( int i = 0; i < gradeQNV; i++ ) {
-            for( int j = 0; j < gradeQNH; j++ ) {
+            for( int j = 0; j < gradeQNH; j++ ) {                    
                 double[] peso = cfg.getNeuronios()[i][j].getPeso();
-                cores[i][j] = new int[]{ 
-                    (int)Math.round( peso[0] * 255 ),
-                    (int)Math.round( peso[1] * 255 ),
-                    (int)Math.round( peso[2] * 255 )
-                };
+                cores[i][j][0] = (int)Math.round( peso[0] * 255 );
+                cores[i][j][1] = (int)Math.round( peso[1] * 255 );
+                cores[i][j][2] = (int)Math.round( peso[2] * 255 );                
             }
         }
 
