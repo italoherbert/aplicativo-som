@@ -2,6 +2,7 @@ package som;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class SOM {
     
@@ -48,6 +49,8 @@ public class SOM {
         if ( config.getSOMListener() != null )
             config.getSOMListener().execIT( new SOMEvent( config, 0, taxaAprendizado, raioVizinhanca ) );         
         
+        int[] indices = new int[ amostras.length ];
+        
         for( it = 1; !config.isFinalizar() && it <= qITs; it++ ) {
             while ( pausar ) {
                 synchronized( this ) {
@@ -59,11 +62,19 @@ public class SOM {
                     }
                 }
             }
-            status = EXECUTANDO;
+            status = EXECUTANDO;                                    
             
+            /*
             int amostraI = (int)Math.floor( Math.random() * amostras.length );
             if ( amostraI == amostras.length )
-                amostraI = amostras.length-1;
+                amostraI = amostras.length-1;            
+            */
+            //int amostraI = it % amostras.length;
+            
+            int aI = (it-1) % amostras.length;
+            if ( aI == 0 )
+                this.calculaIndicesRandomicos( indices );             
+            int amostraI = indices[ aI ];
             
             double[] amostra = amostras[ amostraI ];
             
@@ -118,7 +129,7 @@ public class SOM {
         fins.forEach( f -> f.fim( this, config ) );
         fins.clear();
     }    
-    
+        
     /** Gera aleatoriamente os pesos de cada neurônio. Perceba que 
      * os valores aleatórios variam conforme os valores minimos e máximos dos atributos das amostras. Obs: os pesos dos 
      * neurônios são inicializados dessa forma para já estarem próximos dos sinais de entrada (amostras) e, assim, 
@@ -140,16 +151,76 @@ public class SOM {
     public Neuronio[][] geraNeuronios( double[][][] grade, int gradeQNH, int gradeQNV, double[][] amostras ) {        
         if ( amostras.length < 1 )
             return new Neuronio[0][0];
+                        
+        return this.geraNeuroniosNaoAleatorios( grade, gradeQNH, gradeQNV, amostras );
         
-        int amostrasDIM = amostras[0].length;
+        //return this.geraNeuroniosAleatorios( grade, gradeQNH, gradeQNV, amostras );        
+    }
+    
+    public Neuronio[][] geraNeuroniosNaoAleatorios( double[][][] grade, int gradeQNH, int gradeQNV, double[][] amostras ) {
+        int amostrasDIM = amostras[ 0 ].length;
+        Neuronio[][] neuronios = new Neuronio[gradeQNV][gradeQNH];
+        
+        double[] medias = new double[ amostrasDIM ];
+        double[] minDs = new double[ amostrasDIM ];
+        double[] maxDs = new double[ amostrasDIM ];        
+                
+        for( int j = 0; j < amostrasDIM; j++ ) {
+            minDs[ j ] = Double.POSITIVE_INFINITY;
+            maxDs[ j ] = Double.NEGATIVE_INFINITY;
+        }
+        
+        for( int j = 0; j < amostrasDIM; j++ ) {                        
+            medias[ j ] = 0;
+            for( int i = 0; i < amostras.length; i++ )
+                medias[ j ] += amostras[ i ][ j ];                                            
+            medias[ j ] /= amostras.length;                        
+            
+            for( int i = 0; i < amostras.length; i++ ) {
+                double d = Math.abs( medias[ j ] - amostras[ i ][ j ] );
+                if ( d < minDs[ j ] )
+                    minDs[ j ] = d;
+                if ( d > maxDs[ j ] )
+                    maxDs[ j ] = d;     
+            }
+        }        
+                
+        int[] indices = new int[ amostras.length ];
+        this.calculaIndicesRandomicos( indices );
+        
+        for( int i = 0; i < gradeQNV; i++ ) {
+            for( int j = 0; j < gradeQNH; j++ ) {
+                double[] peso = new double[ amostrasDIM ];
+                
+                for( int k = 0; k < amostrasDIM; k++ ) {
+                    int l = ( ( i * gradeQNH ) + j ) % amostras.length;
+                    double d = Math.abs( amostras[ indices[ l ] ][ k ] - medias[ k ] );
+                    peso[ k ] = 1.0d - ( ( d - minDs[ k ] ) / ( maxDs[ k ] - minDs[ k ] ) );
+                }
+                
+                double x = grade[i][j][0];
+                double y = grade[i][j][1];                 
+
+                neuronios[ i ][ j ] = new Neuronio( x, y, peso );
+            }
+        } 
+        
+        return neuronios;
+    }
+    
+    public Neuronio[][] geraNeuroniosAleatorios( double[][][] grade, int gradeQNH, int gradeQNV, double[][] amostras ) {
+        int amostrasDIM = amostras[ 0 ].length;
+        
+        Neuronio[][] neuronios = new Neuronio[gradeQNV][gradeQNH];
         
         double[] mins = new double[amostrasDIM];
         double[] maxs = new double[amostrasDIM];
+        
         for( int i = 0; i < amostrasDIM; i++ ) {
             mins[i] = Double.MAX_VALUE;
             maxs[i] = Double.MIN_VALUE;
-        }
-        
+        } 
+
         for( int i = 0; i < amostras.length; i++ ) {            
             for( int k = 0; k < amostrasDIM; k++ ) {
                 if ( amostras[i][k] < mins[k] )
@@ -157,25 +228,24 @@ public class SOM {
                 if ( amostras[i][k] > maxs[k] )
                     maxs[k] = amostras[i][k];
             }
-        }
-        
-        Neuronio[][] neuronios = new Neuronio[gradeQNV][gradeQNH];
+        } 
+
         for( int i = 0; i < gradeQNV; i++ ) {
             for( int j = 0; j < gradeQNH; j++ ) {
-                double[] peso = new double[ amostrasDIM ];
+                double[] peso = new double[ amostrasDIM ];            
                 for ( int k = 0; k < amostrasDIM; k++ )
-                    peso[k] = mins[k] + ( Math.random() * Math.abs( maxs[k] - mins[k] ) );                                    
-                
+                   peso[k] += mins[k] + ( Math.random() * Math.abs( maxs[k] - mins[k] ) );                                  
+
                 double x = grade[i][j][0];
                 double y = grade[i][j][1];                 
-                
+
                 neuronios[i][j] = new Neuronio( x, y, peso );
             }
         }
-        
+
         return neuronios;
     }
-    
+        
     /** Gera a grade que será processada para a geração de neurônio. A matriz retornada por esse método é 
      * bidimensional e cada elemento seu é um vetor de dois elementos que representam as posições (x,y) de cada 
      * neurônio (Independente da dimensão dos neurônios que podem ser N dimensionais). Obs: a função de vizinhança 
@@ -371,6 +441,22 @@ public class SOM {
         return Math.sqrt( d );
     }
     
+    public void calculaIndicesRandomicos( int[] indices ) {
+        int n = indices.length;
+                
+        for( int i = 0; i < n; i++ )
+            indices[ i ] = i;
+        
+        for( int k = 0; k < 3; k++ ) {
+            for( int i = 0; i < n; i++ ) {
+                int r = (int)Math.round( Math.random() * (n-1) );
+                int aux = indices[ i ];
+                indices[ i ] = indices[ r ];
+                indices[ r ] = aux;
+            }
+        }
+    }
+    
     /**
      *
      */
@@ -430,6 +516,6 @@ public class SOM {
      */
     public boolean isPausar() {
         return pausar;
-    }
-            
+    }        
+    
 }
