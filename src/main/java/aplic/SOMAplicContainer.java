@@ -32,7 +32,7 @@ public abstract class SOMAplicContainer implements SOMAlgoritmoDriver {
         
     protected SOMAplicManager aplicManager = new SOMAplicManager( this );
     
-    protected final int QUANT_ITERACOES = 10000;
+    protected final int QUANT_GRUPOS_ITERACOES = 15;
     protected final int GRADE_QNH = 20;
     protected final int GRADE_QNV = 20;    
     protected final int GRADE_NEURONIOS_ESP = 5;
@@ -91,7 +91,7 @@ public abstract class SOMAplicContainer implements SOMAlgoritmoDriver {
         cfg.setRaioVizinhancaInicial( RAIO_VIZINHANCA_INICIAL );
         cfg.setRaioVizinhancaFinal( RAIO_VIZINHANCA_FINAL ); 
         
-        cfg.setQuantIteracoes( QUANT_ITERACOES );
+        cfg.setQuantGrupoIteracoes(QUANT_GRUPOS_ITERACOES );
         
         padraoConfig.setGradeQuantNeuroniosHorizontal( cfg.getGradeQuantNeuroniosHorizontal() );
         padraoConfig.setGradeQuantNeuroniosVertical( cfg.getGradeQuantNeuroniosVertical() );
@@ -103,7 +103,7 @@ public abstract class SOMAplicContainer implements SOMAlgoritmoDriver {
         padraoConfig.setRaioVizinhancaInicial( cfg.getRaioVizinhancaInicial() );
         padraoConfig.setRaioVizinhancaFinal( cfg.getRaioVizinhancaFinal() ); 
         
-        padraoConfig.setQuantIteracoes( cfg.getQuantIteracoes() );
+        padraoConfig.setQuantGrupoIteracoes( cfg.getQuantGrupoIteracoes() );
                                                 
         cfg.setSOMAlgoritmoDriver( this );
         
@@ -120,13 +120,15 @@ public abstract class SOMAplicContainer implements SOMAlgoritmoDriver {
         int gradeQNV = cfg.getGradeQuantNeuroniosVertical();
         int gradeNEsp = cfg.getGradeNEsp();
         boolean vizinhancaHexagonal = cfg.isVizinhancaHexagonal();
+        int quantGruposITs = cfg.getQuantGrupoIteracoes();
 
         double[][][] grade = som.geraGrade( gradeQNH, gradeQNV, gradeNEsp, vizinhancaHexagonal );                
         Neuronio[][] neuronios = som.geraNeuronios( grade, gradeQNH, gradeQNV, amostras );
 
         cfg.setGrade( grade );
         cfg.setAmostras( amostras );
-        cfg.setNeuronios( neuronios );         
+        cfg.setNeuronios( neuronios );     
+        cfg.setQuantIteracoes( quantGruposITs * amostras.length ); 
         
         this.configuraAplicCorrente( amostras );
         

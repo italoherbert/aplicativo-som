@@ -41,8 +41,8 @@ public class SOMConfigGUI extends JDialog implements ActionListener {
         }
     }
     
-    public String getQuantIteracoes() {
-        return configPNL.getQuantITsTF().getText(); 
+    public String getQuantGruposIteracoes() {
+        return configPNL.getQuantGruposITsTF().getText(); 
     }
     
     public Object getTipoVizinhanca() {
@@ -77,8 +77,8 @@ public class SOMConfigGUI extends JDialog implements ActionListener {
         return configPNL.getTaxaAprendizadoFinalTF().getText(); 
     }
     
-    public void setQuantIteracoes( String quant ) {
-        configPNL.getQuantITsTF().setText( quant ); 
+    public void setQuantGruposIteracoes( String quant ) {
+        configPNL.getQuantGruposITsTF().setText( quant ); 
     }
     
     public void setTipoVizinhanca( Object tipo ) {

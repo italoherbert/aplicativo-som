@@ -15,14 +15,23 @@ public class SOMConfig {
         
     private int gradeNEsp = 5;
         
+    private int quantGrupoITs;
     private int quantITs;
-                
+    
     public int getQuantIteracoes() {
         return quantITs;
     }
-
-    public void setQuantIteracoes(int quantITs) {
+    
+    public void setQuantIteracoes( int quantITs ) {
         this.quantITs = quantITs;
+    }
+                
+    public int getQuantGrupoIteracoes() {
+        return quantGrupoITs;
+    }
+
+    public void setQuantGrupoIteracoes(int quantITs) {
+        this.quantGrupoITs = quantITs;
     }
     
     public int getGradeQuantNeuroniosHorizontal() {

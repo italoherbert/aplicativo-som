@@ -185,7 +185,7 @@ public class SOM2DAplic implements SOMAplic2, PlanoCartesianoPlot2DDriver {
     public void aposTreinoConcluido() {  
         SOM som = aplicContainer.getSOM();
         SOMCFG cfg = aplicContainer.getSOMCFG();
-        if ( som.getIteracao() < cfg.getQuantIteracoes() )
+        if ( som.getIteracao() < cfg.getQuantGrupoIteracoes() )
             return;
                     
         PlanoCartesianoPlot3D muPlot3D = new PlanoCartesianoPlot3D();

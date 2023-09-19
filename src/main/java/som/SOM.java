@@ -2,7 +2,6 @@ package som;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class SOM {
     
@@ -40,17 +39,19 @@ public class SOM {
         double taFinal = config.getTaxaAprendizadoFinal();
         double rvInicial = config.getRaioVizinhancaInicial();
         double rvFinal = config.getRaioVizinhancaFinal();
-        
-        int qITs = config.getQuantIteracoes();
-        
+                
         double taxaAprendizado = taInicial;
         double raioVizinhanca = rvInicial;
                 
         if ( config.getSOMListener() != null )
             config.getSOMListener().execIT( new SOMEvent( config, 0, taxaAprendizado, raioVizinhanca ) );         
         
-        int[] indices = new int[ amostras.length ];
+        int[] indices = new int[ amostras.length ];        
         
+        int qITs = config.getQuantGrupoIteracoes() * amostras.length;
+        
+        config.setQuantIteracoes( qITs ); 
+
         for( it = 1; !config.isFinalizar() && it <= qITs; it++ ) {
             while ( pausar ) {
                 synchronized( this ) {
@@ -130,10 +131,7 @@ public class SOM {
         fins.clear();
     }    
         
-    /** Gera aleatoriamente os pesos de cada neurônio. Perceba que 
-     * os valores aleatórios variam conforme os valores minimos e máximos dos atributos das amostras. Obs: os pesos dos 
-     * neurônios são inicializados dessa forma para já estarem próximos dos sinais de entrada (amostras) e, assim, 
-     * o tempo de treinamento necessário é diminuido
+    /** Gera aleatoriamente os pesos de cada neurônio.
      * 
      * @param grade - Matriz que representa a grade de neurônio. Perceba que cada neurônio da grade tem uma posição 
      * bidimensional (Isto é, valores de x e y). A grade é bidimensional, mas os pesos dos neurônios são N dimensionais! 
@@ -193,7 +191,7 @@ public class SOM {
                 double[] peso = new double[ amostrasDIM ];
                 
                 for( int k = 0; k < amostrasDIM; k++ ) {
-                    int l = ( ( i * gradeQNH ) + j ) % amostras.length;
+                    int l = ( ( i * gradeQNH ) + j ) % amostras.length;                     
                     double d = Math.abs( amostras[ indices[ l ] ][ k ] - medias[ k ] );
                     peso[ k ] = 1.0d - ( ( d - minDs[ k ] ) / ( maxDs[ k ] - minDs[ k ] ) );
                 }

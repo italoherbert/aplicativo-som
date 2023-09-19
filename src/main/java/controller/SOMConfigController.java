@@ -38,8 +38,8 @@ public class SOMConfigController implements SOMConfigGUIListener {
     
     public void guiParaSOMConfig( SOMConfigGUI gui, SOMConfig cfg ) {
          try {
-            cfg.setQuantIteracoes( Integer.parseInt( gui.getQuantIteracoes() ) );
-            cfg.setVizinhancaHexagonal(gui.getTipoVizinhanca() == SOMConfigGUI.HEXAGONAL );
+            cfg.setQuantGrupoIteracoes( Integer.parseInt( gui.getQuantGruposIteracoes() ) );
+            cfg.setVizinhancaHexagonal( gui.getTipoVizinhanca() == SOMConfigGUI.HEXAGONAL );
             cfg.setGradeNEsp( Integer.parseInt( gui.getNeuroniosDist() ) ); 
             cfg.setGradeQuantNeuroniosHorizontal( Integer.parseInt( gui.getGradeQNH() ) );
             cfg.setGradeQuantNeuroniosVertical( Integer.parseInt( gui.getGradeQNV() ) );
@@ -53,7 +53,7 @@ public class SOMConfigController implements SOMConfigGUIListener {
     }
     
     public void somConfigParaGUI( SOMConfig cfg, SOMConfigGUI gui ) {
-        gui.setQuantIteracoes( String.valueOf( cfg.getQuantIteracoes() ) ); 
+        gui.setQuantGruposIteracoes( String.valueOf( cfg.getQuantGrupoIteracoes() ) ); 
         gui.setTipoVizinhanca( cfg.isVizinhancaHexagonal() ? SOMConfigGUI.HEXAGONAL : SOMConfigGUI.RETANGULAR );
         gui.setNeuroniosDist( String.valueOf( cfg.getGradeNEsp() ) );
         gui.setGradeQNH( String.valueOf( cfg.getGradeQuantNeuroniosHorizontal() ) );

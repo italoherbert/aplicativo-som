@@ -186,7 +186,7 @@ public class SOM3D extends SOMAplicContainer implements SOMAplic, Plot3DDriver, 
 
     @Override
     public void aposTreinoConcluido() {                
-        if ( som.getIteracao() < cfg.getQuantIteracoes() )
+        if ( som.getIteracao() < cfg.getQuantGrupoIteracoes() )
             return;
                     
         Plot3DSimples muPlot3D = new Plot3DSimples();

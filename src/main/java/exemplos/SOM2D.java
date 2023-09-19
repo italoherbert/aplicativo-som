@@ -60,7 +60,7 @@ public class SOM2D extends SOMAplicContainer implements SOMAplic {
     
     @Override
     public void aposTreinoConcluido() {                
-        if ( som.getIteracao() < cfg.getQuantIteracoes() )
+        if ( som.getIteracao() < cfg.getQuantGrupoIteracoes() )
             return;
         
         DesenhoPNL matUDesenhoPNL = new DesenhoPNL();
