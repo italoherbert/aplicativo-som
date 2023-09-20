@@ -70,12 +70,12 @@ public class SOM {
             if ( amostraI == amostras.length )
                 amostraI = amostras.length-1;            
             */
-            //int amostraI = it % amostras.length;
-            
+            //int amostraI = (it-1) % amostras.length;
+                        
             int aI = (it-1) % amostras.length;
             if ( aI == 0 )
                 this.calculaIndicesRandomicos( indices );             
-            int amostraI = indices[ aI ];
+            int amostraI = indices[ aI ];            
             
             double[] amostra = amostras[ amostraI ];
             
